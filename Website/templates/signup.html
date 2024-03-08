@@ -180,6 +180,23 @@
             }
         }
     </style>
+    <script>
+        // Log CSRF token after a successful login
+        function logCSRFToken() {
+            // Replace 'csrftoken' with the name of your CSRF token cookie
+            const csrfToken = getCookie('csrftoken');
+            console.log('CSRF Token:', csrfToken);
+        }
+
+        // Function to get cookie value by name
+        function getCookie(name) {
+            const cookieValue = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+            return cookieValue ? cookieValue.pop() : '';
+        }
+
+        // Call the function when needed (e.g., after a successful login)
+        logCSRFToken();
+    </script>
 </head>
 
 <body>
@@ -194,7 +211,7 @@
     <div class="container">
         <div class="title">Registration</div>
         <div class="content">
-            <form method="post" action="/signup">
+            <form method="post" action="/register">
                 {% csrf_token %}
                 <div class="user-details">
                     <div class="input-box">
@@ -230,7 +247,9 @@
                     </div>
                 </div>
                 <div class="button">
-                    <input type="submit" value="Register">
+                    <input type="submit" value="Register"> Registered already
+                    <a href="{% url 'login' %}">login</a>
+
                 </div>
             </form>
         </div>

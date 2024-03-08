@@ -139,6 +139,13 @@
             text-decoration: underline;
         }
     </style>
+    <script>
+        // Check if there is an error message
+        var errorMessage = "{{ error_message }}";
+        if (errorMessage) {
+            alert(errorMessage);  // Display the error message using an alert
+        }
+    </script>
 </head>
 
 <body>
@@ -157,11 +164,11 @@
                 {% csrf_token %}
                 <div class="row">
                     <i class="fas fa-user"></i>
-                    <input type="text" id="username" name="username" placeholder="Username" required>
+                    <input type="text" id="uname" name="username" placeholder="Username" required>
                 </div>
                 <div class="row">
                     <i class="fas fa-lock"></i>
-                    <input type="text" id="pass1" name="pass1" placeholder="Password" required>
+                    <input type="text" id="password" name="pass1" placeholder="Password" required>
                 </div>
                 <div class="pass"><a href="#">Forgot password?</a></div>
                 <div class="row button">
@@ -171,6 +178,8 @@
             </form>
         </div>
     </div>
+
+    <script src="/static/django/js/csrf.js"></script>
 
 </body>
 

@@ -1,0 +1,113 @@
+<!-- sos_app/templates/sos_app/send_sos.html -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Send SOS</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+
+        h1 {
+            background-color: #333;
+            color: white;
+            padding: 1em;
+            margin: 0;
+        }
+
+        button {
+            margin-top: 60px;
+            padding: 1em;
+            font-size: 1em;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+    {% csrf_token %}
+
+</head>
+
+<body>
+    <h1>Send SOS Signal</h1>
+
+    <button id="sendSOSBtn">Send SOS</button>
+
+    <script>
+        document.getElementById('sendSOSBtn').addEventListener('click', function () {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(
+                    function (position) {
+                        var latitude = position.coords.latitude;
+                        var longitude = position.coords.longitude;
+
+                        // Send SOS alert to the server
+                        alert(latitude, longitude);
+                        sendSOSAlert(latitude, longitude);
+
+                    },
+                    function (error) {
+                        console.error('Error getting location:', error);
+                        alert('Unable to get your location. Please enable location services and try again.');
+                    }
+                );
+            } else {
+                alert('Geolocation is not supported by your browser.');
+            }
+        });
+
+        function sendSOSAlert(latitude, longitude) {
+            console.log(latitude, longitude);
+            fetch('/send_sos_signal/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({ latitude: latitude, longitude: longitude }),
+                credentials: 'include',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert(`SOS alert sent successfully! Nearest police station: ${data.policeStation}`);
+                    } else {
+                        alert(`Failed to send SOS alert. ${data.message}`);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending SOS alert:', error);
+                    alert('Failed to send SOS alert. Please try again.');
+                });
+        }
+
+        // Helper function to get CSRF token from cookies
+        function getCookie(name) {
+            console.log('Getting CSRF token from', name);
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+
+    </script>
+</body>
+
+</html>

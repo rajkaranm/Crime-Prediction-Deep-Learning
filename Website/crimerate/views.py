@@ -70,7 +70,7 @@ def login(request):
 
         # Authenticate the user
         authenticated_user = authenticate(request, username=username, password=pass1)
-        print("Authenticated user", authenticated_user)
+        print("Authenticated user", authenticated_user.username)
 
         if authenticated_user is not None:
             
@@ -93,8 +93,9 @@ def login(request):
 def signout(request):
     pass
 
-@csrf_protect
-@login_required(login_url='/login') 
+# @csrf_protect
+@csrf_exempt
+# @login_required(login_url='/login') 
 def send_sos_signal(request):
     
     if request.method == 'POST':
@@ -118,10 +119,10 @@ def send_sos_signal(request):
             longitude = float(longitude_str)
 
             # Retrieve user profile using the current_user directly
-            try:
-                user_profile = UserProfile.objects.get(user=current_user)
-            except UserProfile.DoesNotExist:
-                raise ValueError(f"User profile for {current_user.username} does not exist.")
+            # try:
+            #     user_profile = UserProfile.objects.get(user=current_user)
+            # except UserProfile.DoesNotExist:
+            #     raise ValueError(f"User profile for {current_user.username} does not exist.")
 
             police_station_name = find_nearest_police_station((latitude, longitude))
             print("Location name", police_station_name)
@@ -229,7 +230,7 @@ def send_sms_to_police(username, police_station):
     try:
         user = User.objects.get(username=username)
         user_profile = UserProfile.objects.get(user=user)
-        user_phone_number = user_profile.phone_number
+        user_phone_number = user_profile.phone_number   
 
         # Replace these with your actual Twilio credentials and phone numbers
         account_sid = 'ACfbf0611561ddf5c8c406e0069499ab6c'

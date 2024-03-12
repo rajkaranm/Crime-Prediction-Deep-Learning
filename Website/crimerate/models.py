@@ -10,7 +10,6 @@ class CrimeRate(models.Model):
         return self.state
 
 
-
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=10)  # Adjust the max_length based on your needs
